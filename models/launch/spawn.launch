@@ -24,4 +24,17 @@
     <node name="mybot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
           args="-urdf -param robot_description -model differential -x $(arg x) -y $(arg y) -z $(arg z)" />
 
+<!-- Launch the robot_state_publisher to broadcast transforms to '/tf' --> 
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn='false' output="screen">
+        <remap from="/joint_states" to="/differential/joint_states" />
+    </node>
+
+<!-- Load the joint controller configuration-->
+    <rosparam file='$(find inverted_pendulum)/config/controller.yaml' command='load'/> 
+
+
+<!-- Load the controllers --> 
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"
+      args="joint_state_controller differential_drive"/>
+
 </launch>
